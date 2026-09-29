@@ -3,130 +3,132 @@ import pandas as pd
 import sqlite3
 from datetime import datetime
 
-# Mobil uyumlu görünüm ve sayfa ayarları
-st.set_page_config(page_title="8. Sınıf İnkılap Tarihi Sınavı", page_icon="🇹🇷", layout="centered")
+st.set_page_config(page_title="8. Sınıf İnkılap Tarihi", page_icon="🇹🇷", layout="centered")
 
-# Veritabanı bağlantısı (Sonuçları kaydetmek için)
+# --- VERİTABANI BAĞLANTISI ---
 conn = sqlite3.connect('ogrenci_sonuclari.db', check_same_thread=False)
 c = conn.cursor()
 c.execute('''CREATE TABLE IF NOT EXISTS sonuclar 
-             (ad TEXT, soyad TEXT, sube TEXT, dogru INTEGER, yanlis INTEGER, bos INTEGER, tarih TEXT)''')
+             (ad TEXT, soyad TEXT, sube TEXT, unite TEXT, dogru INTEGER, yanlis INTEGER, bos INTEGER, tarih TEXT)''')
 conn.commit()
 
-# 1. Ünite Soruları (Örnek olarak ilk 5 soruyu ekledim, dilediğiniz kadar uzatabilirsiniz)
-sorular = [
-    {
-        "soru": "Soru 1: Sanayi İnkılabı ile Avrupa'da seri üretime geçilmiş... Buna göre hangisi Sanayi İnkılabı'nın Osmanlı Devleti'ne etkilerinden biri değildir?",
-        "secenekler": ["A) Yerli esnafın rekabet gücünü kaybetmesi", "B) İthalatın artması", "C) Ekonomik bağımsızlığın güçlenmesi", "D) Ülkenin hammadde kaynağı olarak görülmesi"],
-        "cevap": "C) Ekonomik bağımsızlığın güçlenmesi"
-    },
-    {
-        "soru": "Soru 2: Fransız İhtilali'nin yaydığı milliyetçilik akımının Osmanlı Devleti'nde hangisine neden olduğu söylenebilir?",
-        "secenekler": ["A) Demokratikleşme hareketlerinin tamamen durmasına", "B) Balkan uluslarının bağımsızlık isyanları çıkarmasına", "C) Padişahın yetkilerinin artmasına", "D) Ekonomik gelirlerin yükselmesine"],
-        "cevap": "B) Balkan uluslarının bağımsızlık isyanları çıkarmasına"
-    },
-    {
-        "soru": "Soru 3: Selanik; Türklerin, Rumların, Bulgarların bir arada yaşadığı bir şehirdi... Selanik ile ilgili hangisine ulaşılamaz?",
-        "secenekler": ["A) Çok uluslu yapıya sahiptir.", "B) Kültürel zenginlik barındırır.", "C) Milliyetçilik akımından olumsuz etkilenmiştir.", "D) Şehrin yönetimi tamamen azınlıkların elindedir."],
-        "cevap": "D) Şehrin yönetimi tamamen azınlıkların elindedir."
-    },
-    {
-        "soru": "Soru 4: Selanik liman şehri olmasının yanında, demiryolu ile Avrupa'ya bağlıydı. Bu durumun Mustafa Kemal'e en büyük katkısı ne olmuştur?",
-        "secenekler": ["A) Askerî yeteneklerinin gelişmesi", "B) Ekonomik tecrübe kazanması", "C) Avrupa'daki yeni fikirleri yakından takip edebilmesi", "D) Geleneksel eğitim alması"],
-        "cevap": "C) Avrupa'daki yeni fikirleri yakından takip edebilmesi"
-    },
-    {
-        "soru": "Soru 5: Mustafa'nın annesi geleneksel Mahalle Mektebi'ne, babası modern Şemsi Efendi Okulu'na gitmesini istiyordu. Bu durum neyi kanıtlar?",
-        "secenekler": ["A) Eğitimde birlik olmadığını", "B) Karma eğitim yapıldığını", "C) Sadece askerî okulların başarılı olduğunu", "D) Eğitimin tamamen ücretsiz olduğunu"],
-        "cevap": "A) Eğitimde birlik olmadığını"
-    }
+# --- MÜFREDAT ÜNİTELERİ (Sıralı) ---
+mufredat = [
+    "1. Ünite: Bir Kahraman Doğuyor",
+    "2. Ünite: Millî Uyanış",
+    "3. Ünite: Ya İstiklal Ya Ölüm!",
+    "4. Ünite: Atatürkçülük ve Çağdaşlaşan Türkiye",
+    "5. Ünite: Demokratikleşme Çabaları",
+    "6. Ünite: Atatürk Dönemi Türk Dış Politikası",
+    "7. Ünite: Atatürk'ün Ölümü ve Sonrası"
 ]
 
-# --- ADMİN PANELİ (Yan Menü - Mobilde hamburger menü olarak görünür) ---
-with st.sidebar:
-    st.header("⚙️ Admin Girişi")
-    admin_pass = st.text_input("Admin Şifresi", type="password")
-    
-    if admin_pass == "1923":  # Şifrenizi buradan değiştirebilirsiniz
-        st.success("Admin Paneline Erişildi!")
-        df = pd.read_sql_query("SELECT * FROM sonuclar", conn)
-        
-        if not df.empty:
-            st.write(f"Toplam Çözen Öğrenci: {len(df)}")
-            st.dataframe(df) # Excel benzeri tablo görünümü
-            
-            # Excel (CSV) olarak indirme butonu
-            csv = df.to_csv(index=False).encode('utf-8')
-            st.download_button(
-                label="📥 Sonuçları Excel (CSV) Olarak İndir",
-                data=csv,
-                file_name='sinav_istatistikleri.csv',
-                mime='text/csv',
-            )
-        else:
-            st.info("Henüz sınava giren öğrenci yok.")
+# --- SORU HAVUZU ---
+# Her ünite için 20 soruluk listeleri buraya ekleyeceksiniz. 
+sorular_db = {
+    "1. Ünite: Bir Kahraman Doğuyor": [
+        # (Önceki mesajdaki 20 soruyu buraya yapıştırın)
+    ],
+    "2. Ünite: Millî Uyanış": [
+        # (Aşağıda verdiğim 20 soruyu buraya yapıştırın)
+    ]
+    # Diğer üniteler eklendikçe buraya eklenecek
+}
 
-# --- ÖĞRENCİ SINAV EKRANI ---
-st.title("📝 8. Sınıf İnkılap Tarihi - 1. Ünite Sınavı")
-st.markdown("Lütfen bilgilerinizi eksiksiz girin ve soruları yanıtlayın. Başarılar!")
-
+if 'ogrenci' not in st.session_state:
+    st.session_state.ogrenci = None
+if 'secilen_unite' not in st.session_state:
+    st.session_state.secilen_unite = None
 if 'sinav_bitti' not in st.session_state:
     st.session_state.sinav_bitti = False
 
-if not st.session_state.sinav_bitti:
-    with st.form("sinav_formu"):
-        st.subheader("Öğrenci Bilgileri")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            ad = st.text_input("Adınız", max_chars=30)
-        with col2:
-            soyad = st.text_input("Soyadınız", max_chars=30)
-        with col3:
-            sube = st.selectbox("Şubeniz", ["Seçiniz", "8/A", "8/B", "8/C", "8/D"])
-            
-        st.markdown("---")
-        st.subheader("Sorular")
+# --- ADMİN PANELİ ---
+with st.sidebar:
+    st.header("⚙️ Admin Paneli")
+    if st.text_input("Şifre", type="password") == "1923":
+        df = pd.read_sql_query("SELECT * FROM sonuclar", conn)
+        if not df.empty:
+            st.success(f"Toplam Çözüm: {len(df)}")
+            st.dataframe(df)
+            st.download_button("📥 Excel İndir", df.to_csv(index=False).encode('utf-8'), "sonuclar.csv", "text/csv")
+        else:
+            st.info("Veri yok.")
+
+# --- ANA EKRAN ---
+if st.session_state.ogrenci is None:
+    st.title("🎓 LGS İnkılap Tarihi Görevleri")
+    with st.form("giris"):
+        ad = st.text_input("Adınız", max_chars=30)
+        soyad = st.text_input("Soyadınız", max_chars=30)
+        sube = st.selectbox("Şube", ["Seçiniz", "8/A", "8/B", "8/C", "8/D", "8/E"])
+        if st.form_submit_button("Giriş Yap 🚀") and ad and soyad and sube != "Seçiniz":
+            st.session_state.ogrenci = {'ad': ad.capitalize(), 'soyad': soyad.upper(), 'sube': sube}
+            st.rerun()
+
+elif st.session_state.ogrenci and st.session_state.secilen_unite is None:
+    ogr = st.session_state.ogrenci
+    st.title(f"Hoş Geldin, {ogr['ad']} 👋")
+    
+    c.execute("SELECT unite FROM sonuclar WHERE ad=? AND soyad=? AND sube=?", (ogr['ad'], ogr['soyad'], ogr['sube']))
+    cozulenler = [r[0] for r in c.fetchall()]
+    
+    # 7 Üniteyi Otomatik Döngüye Sokup Kilitleri Kontrol Eden Sistem
+    for i, unite_adi in enumerate(mufredat):
+        st.subheader(f"📚 {unite_adi}")
         
-        kullanici_cevaplari = []
-        for i, soru in enumerate(sorular):
-            st.markdown(f"**{soru['soru']}**")
-            # Telefondan rahat tıklansın diye radio butonları kullanıyoruz
-            cevap = st.radio("Seçeneğinizi işaretleyin:", soru['secenekler'], key=f"soru_{i}", index=None)
-            kullanici_cevaplari.append(cevap)
-            st.write("") # Boşluk
-            
-        submit_button = st.form_submit_button(label="Sınavı Bitir ve Gönder")
-        
-        if submit_button:
-            if ad == "" or soyad == "" or sube == "Seçiniz":
-                st.error("Lütfen ad, soyad ve şube bilgilerinizi eksiksiz doldurun!")
-            elif None in kullanici_cevaplari:
-                st.warning("Lütfen tüm soruları işaretlediğinizden emin olun!")
+        # Eğer sorular_db'ye henüz bu ünitenin sorularını eklemediyseniz "Yapım Aşamasında" der
+        if unite_adi not in sorular_db or len(sorular_db[unite_adi]) == 0:
+            st.warning("🚧 Sorular yükleniyor...")
+        elif unite_adi in cozulenler:
+            st.success("✅ Tamamlandı.")
+        else:
+            # İlk ünite değilse ve bir önceki ünite çözülmemişse kilitle
+            if i > 0 and mufredat[i-1] not in cozulenler:
+                st.error("🔒 KİLİTLİ: Önceki üniteyi bitirmelisin!")
             else:
-                # Puan Hesaplama
-                dogru_sayisi = 0
-                yanlis_sayisi = 0
-                for i, cevap in enumerate(kullanici_cevaplari):
-                    if cevap == sorular[i]["cevap"]:
-                        dogru_sayisi += 1
-                    else:
-                        yanlis_sayisi += 1
-                        
+                st.info("🔓 Görev Açık!")
+                if st.button("▶️ Sınava Başla", key=f"btn_{i}"):
+                    st.session_state.secilen_unite = unite_adi
+                    st.rerun()
+        st.markdown("---")
+        
+    if st.button("🚪 Çıkış"):
+        st.session_state.ogrenci = None
+        st.rerun()
+
+elif st.session_state.secilen_unite and not st.session_state.sinav_bitti:
+    st.title(st.session_state.secilen_unite)
+    sorular = sorular_db[st.session_state.secilen_unite]
+    
+    with st.form("sinav"):
+        cevaplar = []
+        for i, s in enumerate(sorular):
+            st.markdown(f"**{i+1})** {s['soru']}")
+            cevap = st.radio("Cevap:", s['secenekler'], key=f"s_{i}", index=None)
+            cevaplar.append(cevap)
+            st.write("---")
+            
+        if st.form_submit_button("Bitir ve Gönder 📤"):
+            if None in cevaplar:
+                st.error("Lütfen boş soru bırakmayın!")
+            else:
+                dogru = sum([1 for i, c in enumerate(cevaplar) if c == sorular[i]['cevap']])
+                yanlis = len(sorular) - dogru
                 tarih = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                ogr = st.session_state.ogrenci
                 
-                # Veritabanına Kayıt
-                c.execute("INSERT INTO sonuclar (ad, soyad, sube, dogru, yanlis, bos, tarih) VALUES (?, ?, ?, ?, ?, ?, ?)",
-                          (ad.capitalize(), soyad.upper(), sube, dogru_sayisi, yanlis_sayisi, 0, tarih))
+                c.execute("INSERT INTO sonuclar VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+                          (ogr['ad'], ogr['soyad'], ogr['sube'], st.session_state.secilen_unite, dogru, yanlis, 0, tarih))
                 conn.commit()
-                
                 st.session_state.sinav_bitti = True
-                st.session_state.dogru = dogru_sayisi
-                st.session_state.yanlis = yanlis_sayisi
+                st.session_state.sonuc = (dogru, yanlis)
                 st.rerun()
 
-# Sınav bittikten sonra öğrenciye gösterilecek ekran
-if st.session_state.sinav_bitti:
-    st.success("🎉 Sınavınız başarıyla kaydedildi!")
-    st.balloons()
-    st.info(f"**Sonucunuz:** {st.session_state.dogru} Doğru, {st.session_state.yanlis} Yanlış")
-    st.write("Sınavı tamamladığınız için teşekkürler. Sayfayı kapatabilirsiniz.")
+elif st.session_state.sinav_bitti:
+    d, y = st.session_state.sonuc
+    st.success("🎉 Sınav kaydedildi!")
+    st.info(f"✅ Doğru: {d} | ❌ Yanlış: {y}")
+    if st.button("🔙 Görevlere Dön"):
+        st.session_state.secilen_unite = None
+        st.session_state.sinav_bitti = False
+        st.rerun()
